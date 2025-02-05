@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Family Shopping List</title>
+    <link rel="stylesheet" href="/public/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <h1>Family Shopping List</h1>
+    <div id="welcomeMessage" class="welcome-message"></div>
+
+    <div class="input-container">
+      <label for="item">Enter a new item:</label>
+      <input type="text" name="item" id="item" placeholder="Enter a new item" />
+      <button id="addBtn">Add</button>
+    </div>
+
+    <div class="controls-container">
+      <button id="selectAllBtn">Select all</button>
+      <button id="deleteCheckedBtn">Delete checked</button>
+    </div>
+
+    <ul></ul>
+
+    <!-- Add modal HTML -->
+    <div class="modal" id="confirmModal">
+      <div class="modal-content">
+        <h2>Are you sure?</h2>
+        <p>Do you want to delete all checked items?</p>
+        <div class="modal-buttons">
+          <button id="confirmYes">Yes</button>
+          <button id="confirmNo">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/public/app.js"></script>
+  </body>
+</html>

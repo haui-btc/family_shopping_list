@@ -1,0 +1,264 @@
+/* Modern shopping list styles with elegant theme */
+:root {
+  --tyrian-purple: #551c2e;
+  --old-gold: #bbb038;
+  --magenta: #973d59;
+  --indigo-dark: #154262;
+  --indigo-light: #175079;
+  --background-color: #faf7f0;
+  --shadow: 0 2px 8px rgba(85, 28, 46, 0.15);
+}
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--background-color);
+  color: var(--tyrian-purple);
+}
+
+h1 {
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--tyrian-purple);
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.welcome-message {
+  text-align: center;
+  color: var(--magenta);
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: var(--magenta);
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-btn:hover {
+  color: var(--tyrian-purple);
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.input-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  border: 2px solid var(--old-gold);
+}
+
+label {
+  display: none;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--old-gold);
+  box-shadow: 0 0 0 3px rgba(187, 176, 56, 0.2);
+}
+
+button {
+  background-color: var(--indigo-light);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--indigo-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(23, 80, 121, 0.2);
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background: white;
+  margin-bottom: 0.8rem;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  transition: all 0.2s ease;
+  border-left: 4px solid var(--old-gold);
+  gap: 1rem;
+}
+
+li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(85, 28, 46, 0.2);
+}
+
+li button {
+  background-color: var(--magenta);
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+li button:hover {
+  background-color: var(--tyrian-purple);
+}
+
+// Add styles for the icon
+li button i {
+  font-size: 1rem;
+}
+
+input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: var(--old-gold);
+  cursor: pointer;
+}
+
+span {
+  flex: 1;
+}
+
+.controls-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.controls-container button {
+  flex: 1;
+  background-color: var(--old-gold);
+}
+
+.controls-container button:hover {
+  background-color: var(--tyrian-purple);
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 1rem;
+  }
+
+  .input-container,
+  .controls-container {
+    flex-direction: column;
+  }
+
+  .input-container button,
+  .controls-container button {
+    width: 100%;
+  }
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.modal-content h2 {
+  color: var(--tyrian-purple);
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.modal-content p {
+  margin-bottom: 1.5rem;
+  color: var(--indigo-dark);
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.modal-buttons button {
+  min-width: 100px;
+}
+
+.modal-buttons button:first-child {
+  background-color: var(--magenta);
+}
+
+.modal-buttons button:last-child {
+  background-color: var(--indigo-light);
+}
+
+.user-tag {
+  font-size: 0.8rem;
+  color: var(--magenta);
+  font-style: italic;
+  margin-right: auto;
+  flex: 0 1 auto;
+}
+
+.item-text {
+  flex: 1;
+  margin-right: 1rem;
+}
