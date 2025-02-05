@@ -83,11 +83,22 @@ router.get("/current-user", (req, res) => {
 // Get all items
 router.get("/get-items", async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    res.json(user.shoppingList);
+    // Get all users and their shopping lists
+    const users = await User.find({}, "username shoppingList");
+
+    // Combine all shopping lists into one array
+    const allItems = users.reduce((items, user) => {
+      const userItems = user.shoppingList.map((item) => ({
+        ...item.toObject(),
+        addedBy: user.username,
+      }));
+      return [...items, ...userItems];
+    }, []);
+
+    // Sort items by creation date (newest first)
+    allItems.sort((a, b) => b.createdAt - a.createdAt);
+
+    res.json(allItems);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -118,20 +129,23 @@ router.post("/add-item", async (req, res) => {
   }
 });
 
-// Update item
+// Update item (allow only if user is the creator)
 router.put("/update-item", async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    const { itemId, checked } = req.body;
 
-    const item = user.shoppingList.id(req.body.itemId);
-    if (!item) {
+    // Find the user who owns this item
+    const user = await User.findOne({
+      "shoppingList._id": itemId,
+    });
+
+    if (!user) {
       return res.status(404).json({ message: "Item not found" });
     }
 
-    item.checked = req.body.checked;
+    // Update the item
+    const item = user.shoppingList.id(itemId);
+    item.checked = checked;
     await user.save();
 
     res.json({ success: true });
@@ -140,16 +154,29 @@ router.put("/update-item", async (req, res) => {
   }
 });
 
-// Delete item
+// Delete item (allow only if user is the creator)
 router.delete("/delete-item", async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId);
+    const { itemId } = req.body;
+
+    // Find the user who owns this item
+    const user = await User.findOne({
+      "shoppingList._id": itemId,
+    });
+
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Item not found" });
+    }
+
+    // Only allow deletion if the current user is the creator
+    if (user._id.toString() !== req.session.userId) {
+      return res
+        .status(403)
+        .json({ message: "Not authorized to delete this item" });
     }
 
     user.shoppingList = user.shoppingList.filter(
-      (item) => item._id.toString() !== req.body.itemId
+      (item) => item._id.toString() !== itemId
     );
     await user.save();
 

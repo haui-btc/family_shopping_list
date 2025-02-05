@@ -85,9 +85,12 @@ function renderItem(itemData) {
   listItem.appendChild(userSpan);
   listText.textContent = capitalizedItem;
   userSpan.textContent = `Added by ${itemData.addedBy}`;
-  listBtn.appendChild(trashIcon);
-  listItem.appendChild(listBtn);
-  list.appendChild(listItem);
+
+  // Only show delete button if current user is the creator
+  if (itemData.addedBy === currentUsername) {
+    listBtn.appendChild(trashIcon);
+    listItem.appendChild(listBtn);
+  }
 
   // Update item's checked state in database
   checkbox.addEventListener("change", () => {
@@ -100,7 +103,18 @@ function renderItem(itemData) {
         itemId: itemData._id,
         checked: checkbox.checked,
       }),
-    }).catch((err) => console.error("Error updating item:", err));
+    })
+      .then((response) => {
+        if (!response.ok) {
+          // Revert checkbox state if update failed
+          checkbox.checked = !checkbox.checked;
+          return response.json().then((data) => Promise.reject(data.message));
+        }
+      })
+      .catch((err) => {
+        console.error("Error updating item:", err);
+        alert("Could not update item");
+      });
 
     if (checkbox.checked) {
       listText.style.textDecoration = "line-through";
@@ -120,11 +134,19 @@ function renderItem(itemData) {
       },
       body: JSON.stringify({ itemId: itemData._id }),
     })
-      .then(() => {
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((data) => Promise.reject(data.message));
+        }
         list.removeChild(listItem);
       })
-      .catch((err) => console.error("Error deleting item:", err));
+      .catch((err) => {
+        console.error("Error deleting item:", err);
+        alert(err || "Could not delete item");
+      });
   });
+
+  list.appendChild(listItem);
 }
 
 // Load items when page loads
