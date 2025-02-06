@@ -9,6 +9,12 @@ router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    // Validate email format
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({
       $or: [{ username: username }, { email: email }],
