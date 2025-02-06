@@ -28,7 +28,27 @@
       </div>
     </div>
 
+    <!-- Add error modal HTML -->
+    <div class="modal" id="errorModal">
+      <div class="modal-content error">
+        <h2>Error</h2>
+        <p id="errorMessage">Invalid username or password</p>
+        <div class="modal-buttons">
+          <button id="errorOk">OK</button>
+        </div>
+      </div>
+    </div>
+
     <script>
+      const errorModal = document.getElementById("errorModal");
+      const errorMessageEl = document.getElementById("errorMessage");
+      const errorOkBtn = document.getElementById("errorOk");
+
+      // Close modal when OK is clicked
+      errorOkBtn.addEventListener("click", () => {
+        errorModal.style.display = "none";
+      });
+
       document
         .getElementById("loginForm")
         .addEventListener("submit", async (e) => {
@@ -51,10 +71,15 @@
             if (response.ok) {
               window.location.href = "/";
             } else {
-              alert(data.message);
+              // Show error modal instead of alert
+              errorMessageEl.textContent =
+                data.message || "Invalid username or password";
+              errorModal.style.display = "flex";
             }
           } catch (error) {
-            alert("An error occurred");
+            // Show error modal for network errors
+            errorMessageEl.textContent = "An error occurred. Please try again.";
+            errorModal.style.display = "flex";
           }
         });
     </script>

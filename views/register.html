@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register - Family Shopping List</title>
-    <link rel="stylesheet" href="/public/css/style.css" />
     <link rel="stylesheet" href="/public/css/auth.css" />
+    <link rel="stylesheet" href="/public/css/style.css" />
   </head>
   <body>
     <div class="auth-container">
@@ -13,7 +13,7 @@
       <form class="auth-form" id="registerForm">
         <div class="form-group">
           <label for="username">Username</label>
-          <input type="text" id="username" name="username" required />
+          <input type="text" id="username" name="username" required autofocus />
         </div>
         <div class="form-group">
           <label for="password">Password</label>
@@ -26,7 +26,28 @@
       </div>
     </div>
 
+    <!-- Add error modal HTML -->
+    <div class="modal" id="errorModal">
+      <div class="modal-content error">
+        <h2>Error</h2>
+        <p id="errorMessage">Invalid username or password</p>
+        <div class="modal-buttons">
+          <button id="errorOk">OK</button>
+        </div>
+      </div>
+    </div>
+
     <script>
+      const errorModal = document.getElementById("errorModal");
+      const errorMessageEl = document.getElementById("errorMessage");
+      const errorOkBtn = document.getElementById("errorOk");
+      const modalTitle = document.querySelector(".modal-content.error h2");
+
+      // Close modal when OK is clicked
+      errorOkBtn.addEventListener("click", () => {
+        errorModal.style.display = "none";
+      });
+
       document
         .getElementById("registerForm")
         .addEventListener("submit", async (e) => {
@@ -47,13 +68,31 @@
 
             const data = await response.json();
             if (response.ok) {
-              alert("Registration successful! Please login.");
-              window.location.href = "/views/login.html";
+              // Show success message in modal before redirecting
+              modalTitle.textContent = "Welcome!";
+              errorMessageEl.textContent =
+                "Registration successful! Please login.";
+              errorModal.style.display = "flex";
+              // Redirect after clicking OK
+              errorOkBtn.addEventListener(
+                "click",
+                () => {
+                  window.location.href = "/views/login.html";
+                },
+                { once: true }
+              );
             } else {
-              alert(data.message);
+              // Show error in modal
+              modalTitle.textContent = "Error";
+              errorMessageEl.textContent =
+                data.message || "Registration failed";
+              errorModal.style.display = "flex";
             }
           } catch (error) {
-            alert("An error occurred");
+            // Show error modal for network errors
+            modalTitle.textContent = "Error";
+            errorMessageEl.textContent = "An error occurred. Please try again.";
+            errorModal.style.display = "flex";
           }
         });
     </script>

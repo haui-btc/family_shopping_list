@@ -110,3 +110,29 @@ body {
 .auth-links a:hover {
   text-decoration: underline;
 }
+
+/* Smaller error modal styles */
+.modal-content.error {
+  max-width: 300px;
+  padding: 1.5rem;
+}
+
+.modal-content.error h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+}
+
+.modal-content.error p {
+  font-size: 0.9rem;
+  margin-bottom: 1.2rem;
+}
+
+.modal-content.error .modal-buttons button {
+  min-width: 80px;
+  padding: 0.5rem 1rem;
+  background-color: var(--accent-color);
+}
+
+.modal-content.error .modal-buttons button:hover {
+  background-color: var(--text-color);
+}
