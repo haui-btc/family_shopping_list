@@ -1,12 +1,11 @@
 /* Modern shopping list styles with elegant theme */
 :root {
-  --tyrian-purple: #551c2e;
-  --old-gold: #bbb038;
-  --magenta: #973d59;
-  --indigo-dark: #154262;
-  --indigo-light: #175079;
-  --background-color: #faf7f0;
-  --shadow: 0 2px 8px rgba(85, 28, 46, 0.15);
+  --background: #101114;
+  --primary-color: #1c1d20;
+  --secondary-color: #4a4d57;
+  --accent-color: #edb707;
+  --text-color: #f9f9f9;
+  --shadow: 0 2px 8px rgba(237, 183, 7, 0.15);
 }
 
 body {
@@ -14,15 +13,15 @@ body {
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: var(--background-color);
-  color: var(--tyrian-purple);
+  background-color: var(--background);
+  color: var(--text-color);
 }
 
 h1 {
   font-size: 2.5rem;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: var(--tyrian-purple);
+  color: var(--text-color);
   margin-bottom: 2rem;
   text-align: center;
   font-weight: 700;
@@ -30,7 +29,7 @@ h1 {
 
 .welcome-message {
   text-align: center;
-  color: var(--magenta);
+  color: var(--accent-color);
   font-size: 1.2rem;
   margin-bottom: 2rem;
   font-style: italic;
@@ -43,7 +42,7 @@ h1 {
 .logout-btn {
   background: none;
   border: none;
-  color: var(--magenta);
+  color: var(--accent-color);
   padding: 0.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -54,20 +53,18 @@ h1 {
 }
 
 .logout-btn:hover {
-  color: var(--tyrian-purple);
-  transform: translateY(0);
-  box-shadow: none;
+  color: var(--text-color);
 }
 
 .input-container {
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
-  background: white;
+  background: var(--primary-color);
   padding: 1.5rem;
   border-radius: 10px;
   box-shadow: var(--shadow);
-  border: 2px solid var(--old-gold);
+  border: 2px solid var(--accent-color);
 }
 
 label {
@@ -77,21 +74,23 @@ label {
 input[type="text"] {
   flex: 1;
   padding: 0.8rem 1rem;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--secondary-color);
   border-radius: 6px;
   font-size: 1rem;
   transition: all 0.3s ease;
+  background: var(--secondary-color);
+  color: var(--text-color);
 }
 
 input[type="text"]:focus {
   outline: none;
-  border-color: var(--old-gold);
-  box-shadow: 0 0 0 3px rgba(187, 176, 56, 0.2);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(237, 183, 7, 0.2);
 }
 
 button {
-  background-color: var(--indigo-light);
-  color: white;
+  background-color: var(--accent-color);
+  color: var(--background);
   border: none;
   padding: 0.8rem 1.5rem;
   border-radius: 6px;
@@ -102,9 +101,10 @@ button {
 }
 
 button:hover {
-  background-color: var(--indigo-dark);
+  background-color: var(--text-color);
+  color: var(--background);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(23, 80, 121, 0.2);
+  box-shadow: 0 4px 12px rgba(237, 183, 7, 0.2);
 }
 
 ul {
@@ -117,23 +117,23 @@ li {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  background: white;
+  background: var(--primary-color);
   margin-bottom: 0.8rem;
   padding: 1rem 1.5rem;
   border-radius: 8px;
   box-shadow: var(--shadow);
   transition: all 0.2s ease;
-  border-left: 4px solid var(--old-gold);
+  border-left: 4px solid var(--accent-color);
   gap: 1rem;
 }
 
 li:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(85, 28, 46, 0.2);
+  box-shadow: 0 4px 12px rgba(237, 183, 7, 0.2);
 }
 
 li button {
-  background-color: var(--magenta);
+  background-color: #dc3545;
   padding: 0.5rem;
   font-size: 0.9rem;
   width: 32px;
@@ -144,18 +144,18 @@ li button {
 }
 
 li button:hover {
-  background-color: var(--tyrian-purple);
+  background-color: #c82333;
 }
 
-// Add styles for the icon
 li button i {
   font-size: 1rem;
+  color: white;
 }
 
 input[type="checkbox"] {
   width: 1.2rem;
   height: 1.2rem;
-  accent-color: var(--old-gold);
+  accent-color: var(--accent-color);
   cursor: pointer;
 }
 
@@ -171,11 +171,11 @@ span {
 
 .controls-container button {
   flex: 1;
-  background-color: var(--old-gold);
+  background-color: var(--accent-color);
 }
 
 .controls-container button:hover {
-  background-color: var(--tyrian-purple);
+  background-color: var(--text-color);
 }
 
 @media (max-width: 600px) {
@@ -212,7 +212,7 @@ span {
 }
 
 .modal-content {
-  background: white;
+  background: var(--primary-color);
   padding: 2rem;
   border-radius: 10px;
   box-shadow: var(--shadow);
@@ -222,14 +222,14 @@ span {
 }
 
 .modal-content h2 {
-  color: var(--tyrian-purple);
+  color: var(--text-color);
   margin-bottom: 1rem;
   font-size: 1.5rem;
 }
 
 .modal-content p {
   margin-bottom: 1.5rem;
-  color: var(--indigo-dark);
+  color: var(--text-color);
 }
 
 .modal-buttons {
@@ -243,16 +243,16 @@ span {
 }
 
 .modal-buttons button:first-child {
-  background-color: var(--magenta);
+  background-color: var(--accent-color);
 }
 
 .modal-buttons button:last-child {
-  background-color: var(--indigo-light);
+  background-color: var(--text-color);
 }
 
 .user-tag {
   font-size: 0.8rem;
-  color: var(--magenta);
+  color: var(--accent-color);
   font-style: italic;
   margin-right: auto;
   flex: 0 1 auto;
