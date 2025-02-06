@@ -2,10 +2,10 @@
 :root {
   --background: #101114;
   --primary-color: #1c1d20;
-  --secondary-color: #4a4d57;
+  --secondary-color: #686c7775;
   --accent-color: #edb707;
   --text-color: #f9f9f9;
-  --shadow: 0 2px 8px rgba(237, 183, 7, 0.15);
+  --shadow: 0 2px 8px rgba(237, 183, 7, 0.493);
 }
 
 body {
@@ -53,7 +53,7 @@ h1 {
 }
 
 .logout-btn:hover {
-  color: var(--text-color);
+  color: var(--shadow);
 }
 
 .input-container {

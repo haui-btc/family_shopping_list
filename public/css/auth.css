@@ -1,6 +1,18 @@
+/* Reset body styles specifically for auth pages */
+body {
+  min-height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+}
+
 .auth-container {
   max-width: 400px;
-  margin: 2rem auto;
+  width: 90%; /* Add this to ensure container isn't too wide on mobile */
+  margin: 0; /* Remove auto margin */
   padding: 2rem;
   background: var(--primary-color);
   border-radius: 10px;
