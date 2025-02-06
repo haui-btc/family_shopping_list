@@ -7,12 +7,16 @@ const mongoose = require("mongoose");
 // Register
 router.post("/register", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, email, password } = req.body;
 
     // Check if user already exists
-    const existingUser = await User.findOne({ username });
+    const existingUser = await User.findOne({
+      $or: [{ username: username }, { email: email }],
+    });
     if (existingUser) {
-      return res.status(400).json({ message: "Username already exists" });
+      return res
+        .status(400)
+        .json({ message: "Username or email already exists" });
     }
 
     // Hash password
@@ -21,6 +25,7 @@ router.post("/register", async (req, res) => {
     // Create new user
     const user = new User({
       username,
+      email,
       password: hashedPassword,
     });
 
