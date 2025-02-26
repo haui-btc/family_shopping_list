@@ -154,7 +154,6 @@ function loadItems() {
   fetch("/auth/get-items")
     .then((response) => response.json())
     .then((items) => {
-      list.innerHTML = ""; // Clear existing items
       items.forEach(renderItem);
     })
     .catch((err) => console.error("Error loading items:", err));

@@ -93,51 +93,33 @@ router.get("/current-user", (req, res) => {
 
 // Get all items
 router.get("/get-items", async (req, res) => {
-  try {
-    // Get all users and their shopping lists
-    const users = await User.find({}, "username shoppingList");
+  const users = await User.find({}, "username shoppingList");
+  const allItems = users.reduce((items, user) => {
+    const userItems = user.shoppingList.map((item) => ({
+      ...item.toObject(),
+      addedBy: user.username,
+    }));
+    return [...items, ...userItems];
+  }, []);
 
-    // Combine all shopping lists into one array
-    const allItems = users.reduce((items, user) => {
-      const userItems = user.shoppingList.map((item) => ({
-        ...item.toObject(),
-        addedBy: user.username,
-      }));
-      return [...items, ...userItems];
-    }, []);
+  // Sort items by creation date (newest first)
+  allItems.sort((a, b) => b.createdAt - a.createdAt);
 
-    // Sort items by creation date (newest first)
-    allItems.sort((a, b) => b.createdAt - a.createdAt);
-
-    res.json(allItems);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
+  res.json(allItems);
 });
 
 // Add new item
 router.post("/add-item", async (req, res) => {
-  try {
-    const user = await User.findById(req.session.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const newItem = {
-      item: req.body.item,
-      checked: false,
-      createdAt: new Date(),
-      addedBy: user.username,
-      _id: new mongoose.Types.ObjectId(),
-    };
-
-    user.shoppingList.push(newItem);
-    await user.save();
-
-    res.json({ success: true, item: newItem });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
+  const user = await User.findById(req.session.userId);
+  const newItem = {
+    item: req.body.item,
+    checked: false,
+    createdAt: new Date(),
+    addedBy: user.username,
+  };
+  user.shoppingList.push(newItem);
+  await user.save();
+  res.json({ success: true, item: newItem });
 });
 
 // Update item (allow only if user is the creator)
