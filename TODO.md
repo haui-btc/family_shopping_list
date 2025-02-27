@@ -6,4 +6,7 @@
 4. Item is not deleted > message "Item not found"
 5. press delete button > item is deleted
 
-# More items appear after refresh the page
+> More items appear after refresh the page
+
+6. check items again
+7. press delete button > items are deleted
