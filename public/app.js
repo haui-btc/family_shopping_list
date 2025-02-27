@@ -10,6 +10,34 @@ const confirmNoBtn = document.querySelector("#confirmNo");
 let isAllSelected = false;
 let currentUsername = "";
 
+// Add this at the top of your file with other DOM element selections
+const notificationContainer = document.createElement("div");
+notificationContainer.className = "notification";
+document.body.appendChild(notificationContainer);
+
+// Function to show notifications
+function showNotification(message, type = "error") {
+  notificationContainer.className = `notification ${type}`;
+
+  notificationContainer.innerHTML = `
+    <div class="notification-content">
+      <div class="notification-icon">
+        <i class="fas ${
+          type === "error" ? "fa-exclamation-circle" : "fa-check-circle"
+        }"></i>
+      </div>
+      <div class="notification-message">${message}</div>
+    </div>
+  `;
+
+  notificationContainer.classList.add("show");
+
+  // Hide notification after 3 seconds
+  setTimeout(() => {
+    notificationContainer.classList.remove("show");
+  }, 3000);
+}
+
 // Fetch the current user's username when the page loads
 fetch("/auth/current-user")
   .then((response) => response.json())
@@ -127,6 +155,11 @@ function renderItem(itemData) {
 
   // Delete item from database
   listBtn.addEventListener("click", () => {
+    // Add loading state to the list item
+    listItem.classList.add("loading");
+    // Disable the delete button
+    listBtn.disabled = true;
+
     fetch("/auth/delete-item", {
       method: "DELETE",
       headers: {
@@ -138,11 +171,35 @@ function renderItem(itemData) {
         if (!response.ok) {
           return response.json().then((data) => Promise.reject(data.message));
         }
-        list.removeChild(listItem);
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          list.removeChild(listItem);
+          showNotification("Item deleted successfully", "success");
+        }
       })
       .catch((err) => {
         console.error("Error deleting item:", err);
-        alert(err || "Could not delete item");
+
+        // Remove loading state
+        listItem.classList.remove("loading");
+        // Re-enable the delete button
+        listBtn.disabled = false;
+
+        // Show error notification
+        showNotification(
+          err || "Could not delete item. It may have been removed already."
+        );
+
+        // Only remove the item from the UI if it's a "not found" error
+        if (
+          err &&
+          (err.includes("not found") || err.includes("Item not found"))
+        ) {
+          list.removeChild(listItem);
+          showNotification("Item removed successfully", "success");
+        }
       });
   });
 
@@ -159,15 +216,30 @@ function loadItems() {
     .catch((err) => console.error("Error loading items:", err));
 }
 
+// Add validation before creating a list item
 addBtn.addEventListener("click", () => {
-  const myItem = input.value;
+  const myItem = input.value.trim(); // Trim to handle spaces-only input
+
+  if (!myItem) {
+    // Show notification for empty input
+    showNotification("Please enter an item before adding", "error");
+    return;
+  }
+
   input.value = "";
   createListItem(myItem);
 });
 
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    const myItem = input.value;
+    const myItem = input.value.trim(); // Trim to handle spaces-only input
+
+    if (!myItem) {
+      // Show notification for empty input
+      showNotification("Please enter an item before adding", "error");
+      return;
+    }
+
     input.value = "";
     createListItem(myItem);
   }
