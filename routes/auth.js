@@ -38,7 +38,7 @@ router.post("/register", async (req, res) => {
     await user.save();
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error - please refresh the page" });
   }
 });
 
@@ -63,7 +63,7 @@ router.post("/login", async (req, res) => {
     req.session.userId = user._id;
     res.json({ message: "Logged in successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error - please refresh the page" });
   }
 });
 
@@ -87,7 +87,9 @@ router.get("/current-user", (req, res) => {
       res.json({ username: user.username });
     })
     .catch((err) => {
-      res.status(500).json({ message: "Server error" });
+      res
+        .status(500)
+        .json({ message: "Server error - please refresh the page" });
     });
 });
 
@@ -143,7 +145,9 @@ router.put("/update-item", async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res
+      .status(500)
+      .json({ message: "Could not update item - please refresh the page" });
   }
 });
 
@@ -175,7 +179,7 @@ router.delete("/delete-item", async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error - please refresh the page" });
   }
 });
 
@@ -190,56 +194,42 @@ router.delete("/delete-checked-items", async (req, res) => {
 
     // Keep track of successfully deleted items
     let deletedCount = 0;
-    let unauthorizedCount = 0;
-    let notFoundCount = 0;
 
-    // Process each item ID
-    for (const itemId of itemIds) {
-      // Find the user who owns this item
-      const user = await User.findOne({
-        "shoppingList._id": itemId,
-      });
+    // Find all items that the current user can delete
+    const users = await User.find({
+      "shoppingList._id": { $in: itemIds },
+    });
 
-      if (!user) {
-        notFoundCount++;
-        continue;
-      }
-
-      // Only allow deletion if the current user is the creator
-      if (user._id.toString() !== req.session.userId) {
-        unauthorizedCount++;
-        continue;
-      }
-
-      // Remove the item from the user's shopping list
-      user.shoppingList = user.shoppingList.filter(
-        (item) => item._id.toString() !== itemId
+    // Process each user's shopping list
+    for (const user of users) {
+      // Filter items that the current user is authorized to delete
+      const itemsToDelete = user.shoppingList.filter(
+        (item) =>
+          itemIds.includes(item._id.toString()) &&
+          user._id.toString() === req.session.userId
       );
-      await user.save();
-      deletedCount++;
-    }
 
-    // Determine the response based on the results
-    if (deletedCount === 0) {
-      if (unauthorizedCount > 0) {
-        return res.status(403).json({
-          message: "Not authorized to delete these items",
-        });
-      } else if (notFoundCount > 0) {
-        return res.status(404).json({
-          message: "Items not found",
-        });
+      if (itemsToDelete.length > 0) {
+        // Remove authorized items from the user's shopping list
+        user.shoppingList = user.shoppingList.filter(
+          (item) =>
+            !itemIds.includes(item._id.toString()) ||
+            user._id.toString() !== req.session.userId
+        );
+
+        await user.save();
+        deletedCount += itemsToDelete.length;
       }
     }
 
-    // Return success even if some items couldn't be deleted
+    // Return success message
     res.json({
       success: true,
       message: `Deleted ${deletedCount} items successfully`,
     });
   } catch (error) {
     console.error("Error deleting items:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error - please refresh the page" });
   }
 });
 

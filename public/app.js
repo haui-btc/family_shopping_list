@@ -306,7 +306,10 @@ deleteCheckedBtn.addEventListener("click", () => {
               list.removeChild(checkbox.parentElement);
             });
             // Show success notification
-            showNotification("All items removed successfully", "success");
+            showNotification(
+              "All checked items removed successfully",
+              "success"
+            );
           } else {
             showNotification(
               data.message || "Failed to delete some items",
