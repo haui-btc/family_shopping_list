@@ -202,25 +202,31 @@ router.delete("/delete-checked-items", async (req, res) => {
       return res.status(401).json({ message: "User not authenticated" });
     }
 
-    // First, identify items that belong to the current user
+    // First, check which items actually exist in the user's shopping list
     const userItems = currentUser.shoppingList.filter((item) =>
       itemIds.includes(item._id.toString())
     );
 
-    // Identify items that were requested but not found in user's list
+    // Get IDs of items that exist in the user's list
     const userItemIds = userItems.map((item) => item._id.toString());
+
+    // Find which requested items don't exist in the user's list
     notFoundIds = itemIds.filter((id) => !userItemIds.includes(id));
 
+    // Only attempt to delete items if there are any to delete
     if (userItems.length > 0) {
+      // Remove the items from the user's shopping list
       currentUser.shoppingList = currentUser.shoppingList.filter(
         (item) => !itemIds.includes(item._id.toString())
       );
+
+      // Save the updated user document
       await currentUser.save();
-      deletedCount += userItems.length;
+      deletedCount = userItems.length;
     }
 
     // Return success message with both deleted and not found IDs
-    res.json({
+    return res.json({
       success: true,
       message: `Deleted ${deletedCount} items successfully`,
       deletedIds: userItems.map((item) => item._id.toString()),
@@ -228,7 +234,9 @@ router.delete("/delete-checked-items", async (req, res) => {
     });
   } catch (error) {
     console.error("Error deleting items:", error);
-    res.status(500).json({ message: "Server error - please refresh the page" });
+    return res
+      .status(500)
+      .json({ message: "Server error - please refresh the page" });
   }
 });
 

@@ -302,7 +302,12 @@ deleteCheckedBtn.addEventListener("click", () => {
         },
         body: JSON.stringify({ itemIds }),
       })
-        .then((response) => response.json())
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Server error");
+          }
+          return response.json();
+        })
         .then((data) => {
           if (data.success) {
             // Handle successfully deleted items
@@ -375,14 +380,7 @@ deleteCheckedBtn.addEventListener("click", () => {
             );
 
             // Reset all checkboxes on error
-            document
-              .querySelectorAll('input[type="checkbox"]:checked')
-              .forEach((checkbox) => {
-                checkbox.checked = false;
-                const textSpan = checkbox.nextElementSibling;
-                textSpan.style.textDecoration = "none";
-                textSpan.style.opacity = "1";
-              });
+            resetAllCheckboxes();
           }
         })
         .catch((err) => {
@@ -390,14 +388,7 @@ deleteCheckedBtn.addEventListener("click", () => {
           showNotification("Error deleting items", "error");
 
           // Reset all checkboxes on error
-          document
-            .querySelectorAll('input[type="checkbox"]:checked')
-            .forEach((checkbox) => {
-              checkbox.checked = false;
-              const textSpan = checkbox.nextElementSibling;
-              textSpan.style.textDecoration = "none";
-              textSpan.style.opacity = "1";
-            });
+          resetAllCheckboxes();
         });
     }
 
@@ -406,6 +397,20 @@ deleteCheckedBtn.addEventListener("click", () => {
     modal.classList.remove("show");
     cleanup();
   };
+
+  // Helper function to reset all checked checkboxes
+  function resetAllCheckboxes() {
+    document
+      .querySelectorAll('input[type="checkbox"]:checked')
+      .forEach((checkbox) => {
+        checkbox.checked = false;
+        const textSpan = checkbox.nextElementSibling;
+        if (textSpan) {
+          textSpan.style.textDecoration = "none";
+          textSpan.style.opacity = "1";
+        }
+      });
+  }
 
   const handleCancel = () => {
     modal.classList.remove("show");
