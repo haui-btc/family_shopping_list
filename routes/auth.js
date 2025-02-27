@@ -183,7 +183,7 @@ router.delete("/delete-item", async (req, res) => {
   }
 });
 
-// Add this new route to handle deleting multiple items
+// Update the delete-checked-items route to handle missing items better
 router.delete("/delete-checked-items", async (req, res) => {
   try {
     const { itemIds } = req.body;
@@ -194,6 +194,7 @@ router.delete("/delete-checked-items", async (req, res) => {
 
     // Keep track of successfully deleted items
     let deletedCount = 0;
+    let notFoundIds = [];
 
     // Get the current user
     const currentUser = await User.findById(req.session.userId);
@@ -201,10 +202,14 @@ router.delete("/delete-checked-items", async (req, res) => {
       return res.status(401).json({ message: "User not authenticated" });
     }
 
-    // First, delete items that belong to the current user
+    // First, identify items that belong to the current user
     const userItems = currentUser.shoppingList.filter((item) =>
       itemIds.includes(item._id.toString())
     );
+
+    // Identify items that were requested but not found in user's list
+    const userItemIds = userItems.map((item) => item._id.toString());
+    notFoundIds = itemIds.filter((id) => !userItemIds.includes(id));
 
     if (userItems.length > 0) {
       currentUser.shoppingList = currentUser.shoppingList.filter(
@@ -214,11 +219,12 @@ router.delete("/delete-checked-items", async (req, res) => {
       deletedCount += userItems.length;
     }
 
-    // Return success message
+    // Return success message with both deleted and not found IDs
     res.json({
       success: true,
       message: `Deleted ${deletedCount} items successfully`,
       deletedIds: userItems.map((item) => item._id.toString()),
+      notFoundIds: notFoundIds,
     });
   } catch (error) {
     console.error("Error deleting items:", error);

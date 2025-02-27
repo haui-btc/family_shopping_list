@@ -305,7 +305,7 @@ deleteCheckedBtn.addEventListener("click", () => {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            // Only remove items that were actually deleted on the server
+            // Handle successfully deleted items
             if (data.deletedIds && data.deletedIds.length > 0) {
               data.deletedIds.forEach((itemId) => {
                 const itemToRemove = document.querySelector(
@@ -316,23 +316,53 @@ deleteCheckedBtn.addEventListener("click", () => {
                 }
               });
 
-              // Uncheck any remaining items
-              document
-                .querySelectorAll('input[type="checkbox"]:checked')
-                .forEach((checkbox) => {
-                  checkbox.checked = false;
-                  const textSpan = checkbox.nextElementSibling;
-                  textSpan.style.textDecoration = "none";
-                  textSpan.style.opacity = "1";
-                });
-
               // Show success notification
               showNotification(
                 `Deleted ${data.deletedIds.length} items successfully`,
                 "success"
               );
-            } else {
-              // If no items were deleted
+            }
+
+            // Handle items that were not found or couldn't be deleted
+            if (data.notFoundIds && data.notFoundIds.length > 0) {
+              data.notFoundIds.forEach((itemId) => {
+                const itemElement = document.querySelector(
+                  `li[data-item-id="${itemId}"]`
+                );
+                if (itemElement) {
+                  // Reset the checkbox and styling for items that couldn't be deleted
+                  const checkbox = itemElement.querySelector(
+                    'input[type="checkbox"]'
+                  );
+                  if (checkbox) {
+                    checkbox.checked = false;
+                    const textSpan = checkbox.nextElementSibling;
+                    if (textSpan) {
+                      textSpan.style.textDecoration = "none";
+                      textSpan.style.opacity = "1";
+                    }
+                  }
+                }
+              });
+
+              if (data.notFoundIds.length > 0 && data.deletedIds.length === 0) {
+                showNotification(
+                  "No items were deleted. You can only delete items you created.",
+                  "error"
+                );
+              } else if (data.notFoundIds.length > 0) {
+                showNotification(
+                  `${data.notFoundIds.length} items couldn't be deleted. You can only delete your own items.`,
+                  "error"
+                );
+              }
+            }
+
+            // If nothing was deleted or found
+            if (
+              (!data.deletedIds || data.deletedIds.length === 0) &&
+              (!data.notFoundIds || data.notFoundIds.length === 0)
+            ) {
               showNotification(
                 "No items were deleted. You can only delete items you created.",
                 "error"
@@ -343,11 +373,31 @@ deleteCheckedBtn.addEventListener("click", () => {
               data.message || "Failed to delete some items",
               "error"
             );
+
+            // Reset all checkboxes on error
+            document
+              .querySelectorAll('input[type="checkbox"]:checked')
+              .forEach((checkbox) => {
+                checkbox.checked = false;
+                const textSpan = checkbox.nextElementSibling;
+                textSpan.style.textDecoration = "none";
+                textSpan.style.opacity = "1";
+              });
           }
         })
         .catch((err) => {
           console.error("Error deleting items:", err);
           showNotification("Error deleting items", "error");
+
+          // Reset all checkboxes on error
+          document
+            .querySelectorAll('input[type="checkbox"]:checked')
+            .forEach((checkbox) => {
+              checkbox.checked = false;
+              const textSpan = checkbox.nextElementSibling;
+              textSpan.style.textDecoration = "none";
+              textSpan.style.opacity = "1";
+            });
         });
     }
 
