@@ -90,6 +90,8 @@ function createListItem(item) {
 // Separate rendering function
 function renderItem(itemData) {
   const listItem = document.createElement("li");
+  listItem.dataset.itemId = itemData._id;
+
   const listText = document.createElement("span");
   const userSpan = document.createElement("span");
   const listBtn = document.createElement("button");
@@ -274,9 +276,50 @@ deleteCheckedBtn.addEventListener("click", () => {
   modal.classList.add("show");
 
   const handleDelete = () => {
+    // Create an array of item IDs to delete
+    const itemIds = [];
     checkedItems.forEach((checkbox) => {
-      list.removeChild(checkbox.parentElement);
+      // Get the list item element
+      const listItem = checkbox.parentElement;
+      // Find the item ID (stored in a data attribute)
+      const itemId = listItem.dataset.itemId;
+      if (itemId) {
+        itemIds.push(itemId);
+      }
     });
+
+    // Only proceed if we have items to delete
+    if (itemIds.length > 0) {
+      // Send delete request to the server
+      fetch("/auth/delete-checked-items", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ itemIds }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            // Remove items from UI
+            checkedItems.forEach((checkbox) => {
+              list.removeChild(checkbox.parentElement);
+            });
+            // Show success notification
+            showNotification("All items removed successfully", "success");
+          } else {
+            showNotification(
+              data.message || "Failed to delete some items",
+              "error"
+            );
+          }
+        })
+        .catch((err) => {
+          console.error("Error deleting items:", err);
+          showNotification("Error deleting items", "error");
+        });
+    }
+
     isAllSelected = false;
     selectAllBtn.textContent = "Select all";
     modal.classList.remove("show");

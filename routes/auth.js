@@ -179,4 +179,68 @@ router.delete("/delete-item", async (req, res) => {
   }
 });
 
+// Add this new route to handle deleting multiple items
+router.delete("/delete-checked-items", async (req, res) => {
+  try {
+    const { itemIds } = req.body;
+
+    if (!itemIds || !Array.isArray(itemIds) || itemIds.length === 0) {
+      return res.status(400).json({ message: "No items to delete" });
+    }
+
+    // Keep track of successfully deleted items
+    let deletedCount = 0;
+    let unauthorizedCount = 0;
+    let notFoundCount = 0;
+
+    // Process each item ID
+    for (const itemId of itemIds) {
+      // Find the user who owns this item
+      const user = await User.findOne({
+        "shoppingList._id": itemId,
+      });
+
+      if (!user) {
+        notFoundCount++;
+        continue;
+      }
+
+      // Only allow deletion if the current user is the creator
+      if (user._id.toString() !== req.session.userId) {
+        unauthorizedCount++;
+        continue;
+      }
+
+      // Remove the item from the user's shopping list
+      user.shoppingList = user.shoppingList.filter(
+        (item) => item._id.toString() !== itemId
+      );
+      await user.save();
+      deletedCount++;
+    }
+
+    // Determine the response based on the results
+    if (deletedCount === 0) {
+      if (unauthorizedCount > 0) {
+        return res.status(403).json({
+          message: "Not authorized to delete these items",
+        });
+      } else if (notFoundCount > 0) {
+        return res.status(404).json({
+          message: "Items not found",
+        });
+      }
+    }
+
+    // Return success even if some items couldn't be deleted
+    res.json({
+      success: true,
+      message: `Deleted ${deletedCount} items successfully`,
+    });
+  } catch (error) {
+    console.error("Error deleting items:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;
