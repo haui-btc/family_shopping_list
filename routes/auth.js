@@ -195,37 +195,30 @@ router.delete("/delete-checked-items", async (req, res) => {
     // Keep track of successfully deleted items
     let deletedCount = 0;
 
-    // Find all items that the current user can delete
-    const users = await User.find({
-      "shoppingList._id": { $in: itemIds },
-    });
+    // Get the current user
+    const currentUser = await User.findById(req.session.userId);
+    if (!currentUser) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
 
-    // Process each user's shopping list
-    for (const user of users) {
-      // Filter items that the current user is authorized to delete
-      const itemsToDelete = user.shoppingList.filter(
-        (item) =>
-          itemIds.includes(item._id.toString()) &&
-          user._id.toString() === req.session.userId
+    // First, delete items that belong to the current user
+    const userItems = currentUser.shoppingList.filter((item) =>
+      itemIds.includes(item._id.toString())
+    );
+
+    if (userItems.length > 0) {
+      currentUser.shoppingList = currentUser.shoppingList.filter(
+        (item) => !itemIds.includes(item._id.toString())
       );
-
-      if (itemsToDelete.length > 0) {
-        // Remove authorized items from the user's shopping list
-        user.shoppingList = user.shoppingList.filter(
-          (item) =>
-            !itemIds.includes(item._id.toString()) ||
-            user._id.toString() !== req.session.userId
-        );
-
-        await user.save();
-        deletedCount += itemsToDelete.length;
-      }
+      await currentUser.save();
+      deletedCount += userItems.length;
     }
 
     // Return success message
     res.json({
       success: true,
       message: `Deleted ${deletedCount} items successfully`,
+      deletedIds: userItems.map((item) => item._id.toString()),
     });
   } catch (error) {
     console.error("Error deleting items:", error);

@@ -143,7 +143,11 @@ function renderItem(itemData) {
       })
       .catch((err) => {
         console.error("Error updating item:", err);
-        alert("Could not update item");
+        // Replace alert with showNotification
+        showNotification(
+          err || "Could not update item - please refresh the page",
+          "error"
+        );
       });
 
     if (checkbox.checked) {
@@ -301,15 +305,39 @@ deleteCheckedBtn.addEventListener("click", () => {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            // Remove items from UI
-            checkedItems.forEach((checkbox) => {
-              list.removeChild(checkbox.parentElement);
-            });
-            // Show success notification
-            showNotification(
-              "All checked items removed successfully",
-              "success"
-            );
+            // Only remove items that were actually deleted on the server
+            if (data.deletedIds && data.deletedIds.length > 0) {
+              data.deletedIds.forEach((itemId) => {
+                const itemToRemove = document.querySelector(
+                  `li[data-item-id="${itemId}"]`
+                );
+                if (itemToRemove) {
+                  list.removeChild(itemToRemove);
+                }
+              });
+
+              // Uncheck any remaining items
+              document
+                .querySelectorAll('input[type="checkbox"]:checked')
+                .forEach((checkbox) => {
+                  checkbox.checked = false;
+                  const textSpan = checkbox.nextElementSibling;
+                  textSpan.style.textDecoration = "none";
+                  textSpan.style.opacity = "1";
+                });
+
+              // Show success notification
+              showNotification(
+                `Deleted ${data.deletedIds.length} items successfully`,
+                "success"
+              );
+            } else {
+              // If no items were deleted
+              showNotification(
+                "No items were deleted. You can only delete items you created.",
+                "error"
+              );
+            }
           } else {
             showNotification(
               data.message || "Failed to delete some items",
