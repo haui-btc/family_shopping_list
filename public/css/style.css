@@ -2,7 +2,7 @@
 :root {
   --background: #101114;
   --primary-color: #1c1d20;
-  --secondary-color: #686c7775;
+  --secondary-color: #4a4d57;
   --accent-color: #edb707;
   --text-color: #f9f9f9;
   --shadow: 0 2px 8px rgba(237, 183, 7, 0.493);
@@ -183,14 +183,21 @@ span {
     padding: 1rem;
   }
 
-  .input-container,
-  .controls-container {
+  .input-container {
     flex-direction: column;
   }
 
-  .input-container button,
-  .controls-container button {
+  .input-container button {
     width: 100%;
+  }
+
+  /* Controls container remains in row layout even on small screens */
+  .controls-container {
+    flex-direction: row;
+  }
+
+  .controls-container button {
+    width: auto;
   }
 }
 
