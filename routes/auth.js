@@ -112,22 +112,46 @@ router.get("/get-items", async (req, res) => {
 
 // Add new item
 router.post("/add-item", async (req, res) => {
-  const user = await User.findById(req.session.userId);
-  const newItem = {
-    item: req.body.item,
-    checked: false,
-    createdAt: new Date(),
-    addedBy: user.username,
-  };
-  user.shoppingList.push(newItem);
-  await user.save();
-  res.json({ success: true, item: newItem });
+  try {
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    const newItem = {
+      item: req.body.item,
+      checked: false,
+      createdAt: new Date(),
+      addedBy: user.username,
+    };
+
+    user.shoppingList.push(newItem);
+    await user.save();
+
+    // Get the newly created item with its MongoDB-generated ID
+    const savedItem = user.shoppingList[user.shoppingList.length - 1];
+
+    res.json({
+      success: true,
+      item: {
+        ...savedItem.toObject(),
+        _id: savedItem._id.toString(), // Ensure ID is a string
+      },
+    });
+  } catch (error) {
+    console.error("Error adding item:", error);
+    res.status(500).json({ message: "Server error - could not add item" });
+  }
 });
 
-// Update item (allow only if user is the creator)
+// Update item (allow any user to update checked status)
 router.put("/update-item", async (req, res) => {
   try {
     const { itemId, checked } = req.body;
+
+    if (!itemId) {
+      return res.status(400).json({ message: "Item ID is required" });
+    }
 
     // Find the user who owns this item
     const user = await User.findOne({
@@ -135,16 +159,22 @@ router.put("/update-item", async (req, res) => {
     });
 
     if (!user) {
+      console.log(`Item not found: ${itemId}`);
       return res.status(404).json({ message: "Item not found" });
     }
 
     // Update the item
     const item = user.shoppingList.id(itemId);
+    if (!item) {
+      return res.status(404).json({ message: "Item not found in user's list" });
+    }
+
     item.checked = checked;
     await user.save();
 
     res.json({ success: true });
   } catch (error) {
+    console.error("Error updating item:", error);
     res
       .status(500)
       .json({ message: "Could not update item - please refresh the page" });

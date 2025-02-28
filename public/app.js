@@ -78,13 +78,39 @@ function createListItem(item) {
     },
     body: JSON.stringify({ item }),
   })
-    .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) {
+        return response
+          .json()
+          .then((data) => Promise.reject(data.message || "Failed to add item"));
+      }
+      return response.json();
+    })
     .then((data) => {
-      if (data.success) {
-        renderItem(data.item);
+      if (data.success && data.item) {
+        // Make sure we're using the correct ID from the server response
+        // Check if _id exists before trying to access it
+        if (!data.item._id) {
+          console.error("Server returned item without _id:", data.item);
+          showNotification("Item added but may not display correctly", "error");
+          return;
+        }
+
+        const savedItem = {
+          ...data.item,
+          _id: data.item._id.toString
+            ? data.item._id.toString()
+            : data.item._id,
+        };
+        renderItem(savedItem);
+      } else {
+        showNotification("Failed to add item", "error");
       }
     })
-    .catch((err) => console.error("Error saving item:", err));
+    .catch((err) => {
+      console.error("Error saving item:", err);
+      showNotification(err || "Error adding item", "error");
+    });
 }
 
 // Separate rendering function
@@ -101,6 +127,12 @@ function renderItem(itemData) {
 
   // Set checkbox state from database
   checkbox.checked = itemData.checked;
+
+  // Apply initial styling based on checked state
+  if (itemData.checked) {
+    listText.style.textDecoration = "line-through";
+    listText.style.opacity = "0.7";
+  }
 
   trashIcon.classList.add("fas", "fa-trash");
 
@@ -124,6 +156,11 @@ function renderItem(itemData) {
 
   // Update item's checked state in database
   checkbox.addEventListener("change", () => {
+    // Store the current checked state
+    const isChecked = checkbox.checked;
+
+    // Don't apply visual changes immediately - wait for server confirmation
+
     fetch("/auth/update-item", {
       method: "PUT",
       headers: {
@@ -131,32 +168,40 @@ function renderItem(itemData) {
       },
       body: JSON.stringify({
         itemId: itemData._id,
-        checked: checkbox.checked,
+        checked: isChecked,
       }),
     })
       .then((response) => {
         if (!response.ok) {
           // Revert checkbox state if update failed
-          checkbox.checked = !checkbox.checked;
+          checkbox.checked = !isChecked;
           return response.json().then((data) => Promise.reject(data.message));
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data && data.success) {
+          // Only apply visual changes after successful server update
+          if (isChecked) {
+            listText.style.textDecoration = "line-through";
+            listText.style.opacity = "0.7";
+          } else {
+            listText.style.textDecoration = "none";
+            listText.style.opacity = "1";
+          }
+        } else {
+          // If server indicates failure but didn't throw an error
+          checkbox.checked = !isChecked;
+          showNotification("Failed to update item status", "error");
         }
       })
       .catch((err) => {
         console.error("Error updating item:", err);
-        // Replace alert with showNotification
         showNotification(
           err || "Could not update item - please refresh the page",
           "error"
         );
       });
-
-    if (checkbox.checked) {
-      listText.style.textDecoration = "line-through";
-      listText.style.opacity = "0.7";
-    } else {
-      listText.style.textDecoration = "none";
-      listText.style.opacity = "1";
-    }
   });
 
   // Delete item from database
@@ -255,15 +300,74 @@ selectAllBtn.addEventListener("click", () => {
   const checkboxes = document.querySelectorAll('input[type="checkbox"]');
   isAllSelected = !isAllSelected;
 
+  // Create an array to track all update promises
+  const updatePromises = [];
+
   checkboxes.forEach((checkbox) => {
-    checkbox.checked = isAllSelected;
-    const textSpan = checkbox.nextElementSibling;
-    if (isAllSelected) {
-      textSpan.style.textDecoration = "line-through";
-      textSpan.style.opacity = "0.7";
-    } else {
-      textSpan.style.textDecoration = "none";
-      textSpan.style.opacity = "1";
+    // Only update if the state is changing
+    if (checkbox.checked !== isAllSelected) {
+      checkbox.checked = isAllSelected;
+      const listItem = checkbox.parentElement;
+      const itemId = listItem.dataset.itemId;
+      const textSpan = checkbox.nextElementSibling;
+
+      // Add the update request to our promises array
+      if (itemId) {
+        const updatePromise = fetch("/auth/update-item", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            itemId: itemId,
+            checked: isAllSelected,
+          }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              // If update fails, revert the checkbox
+              checkbox.checked = !isAllSelected;
+              return response
+                .json()
+                .then((data) => Promise.reject(data.message));
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data && data.success) {
+              // Apply visual changes after successful update
+              if (isAllSelected) {
+                textSpan.style.textDecoration = "line-through";
+                textSpan.style.opacity = "0.7";
+              } else {
+                textSpan.style.textDecoration = "none";
+                textSpan.style.opacity = "1";
+              }
+            } else {
+              // Revert checkbox if server indicates failure
+              checkbox.checked = !isAllSelected;
+            }
+          })
+          .catch((err) => {
+            console.error("Error updating item:", err);
+            // Don't need to revert checkbox here as it's handled in the response.ok check
+          });
+
+        updatePromises.push(updatePromise);
+      }
+    }
+  });
+
+  // After all updates complete, show appropriate notification
+  Promise.allSettled(updatePromises).then((results) => {
+    const successful = results.filter((r) => r.status === "fulfilled").length;
+    const failed = results.filter((r) => r.status === "rejected").length;
+
+    if (failed > 0) {
+      showNotification(`${failed} items couldn't be updated`, "error");
+    }
+    if (successful > 0) {
+      showNotification(`${successful} items updated successfully`, "success");
     }
   });
 
