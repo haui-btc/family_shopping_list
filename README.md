@@ -2,7 +2,7 @@
 
 A collaborative shopping list application that allows family members to create, manage, and share shopping items in real-time.
 
-![Family Shopping List](https://placeholder-for-app-screenshot.com/screenshot.png)
+![Family Shopping List](/screenshots/1.png)
 
 ## Features
 
