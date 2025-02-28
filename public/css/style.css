@@ -57,7 +57,13 @@ h1 {
 }
 
 .logout-btn:hover {
-  color: #3a56c5;
+  color: #ffffff;
+  background-color: #3a56c5;
+  border-radius: var(--border-radius);
+}
+
+.logout-btn i {
+  color: inherit;
 }
 
 .input-container {
