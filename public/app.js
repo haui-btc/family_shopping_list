@@ -358,14 +358,10 @@ selectAllBtn.addEventListener("click", () => {
 
   // After all updates complete, show appropriate notification
   Promise.allSettled(updatePromises).then((results) => {
-    const successful = results.filter((r) => r.status === "fulfilled").length;
     const failed = results.filter((r) => r.status === "rejected").length;
 
     if (failed > 0) {
       showNotification(`${failed} items couldn't be updated`, "error");
-    }
-    if (successful > 0) {
-      showNotification(`${successful} items updated successfully`, "success");
     }
   });
 
