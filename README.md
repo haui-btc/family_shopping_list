@@ -2,7 +2,7 @@
 
 A collaborative shopping list application that allows family members to create, manage, and share shopping items in real-time.
 
-![Family Shopping List](/screenshots/2.png)
+![Family Shopping List](/screenshots/screen.png)
 
 ## Features
 
@@ -13,6 +13,7 @@ A collaborative shopping list application that allows family members to create, 
 - **User-friendly Interface**: Clean, modern UI with intuitive controls
 - **Bulk Actions**: Select all items or delete checked items with a single click
 - **Visual Feedback**: Notifications for all user actions
+- **Organized Layout**: Items displayed in a dedicated container with visual distinction
 
 ## Technology Stack
 
@@ -77,6 +78,8 @@ family-shopping-list/
 ├── models/
 │   ├── user.js
 │   └── item.js
+├── screenshots/
+│   └── screen.png
 ├── server.js
 └── package.json
 ```
