@@ -8,6 +8,7 @@
   --delete-color: #ff5a5a;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   --border-radius: 12px;
+  --list-container-bg: #ebeef2;
 }
 
 body {
@@ -169,7 +170,7 @@ span {
 .controls-container {
   display: flex;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .controls-container button {
@@ -363,4 +364,15 @@ button:disabled {
 input[type="checkbox"]:checked + .item-text {
   text-decoration: line-through;
   color: #6c757d;
+}
+
+/* New list container styles */
+.list-container {
+  background-color: var(--list-container-bg);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+  min-height: 100px;
+  height: auto;
 }
