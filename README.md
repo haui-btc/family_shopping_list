@@ -61,3 +61,42 @@ A collaborative shopping list application that allows family members to create, 
 5. **Bulk Actions**: Use "Select all" to check all items, and "Delete checked" to remove multiple items at once
 
 ## Project Structure
+
+family-shopping-list/
+├── public/
+│ ├── css/
+│ │ ├── style.css
+│ │ └── auth.css
+│ ├── app.js
+├── views/
+│ ├── login.html
+│ └── register.html
+├── routes/
+│ └── auth.js
+├── models/
+│ ├── user.js
+│ └── item.js
+├── server.js
+└── package.json
+
+# Contributing
+
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add some amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Font Awesome for the icons
+- MongoDB Atlas for database hosting
+- All contributors who have helped shape this project
+
+---
+
+© 2023 Family Shopping List. All rights reserved.
