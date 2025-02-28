@@ -62,22 +62,24 @@ A collaborative shopping list application that allows family members to create, 
 
 ## Project Structure
 
+```
 family-shopping-list/
 ├── public/
-│ ├── css/
-│ │ ├── style.css
-│ │ └── auth.css
-│ ├── app.js
+│   ├── css/
+│   │   ├── style.css
+│   │   └── auth.css
+│   ├── app.js
 ├── views/
-│ ├── login.html
-│ └── register.html
+│   ├── login.html
+│   └── register.html
 ├── routes/
-│ └── auth.js
+│   └── auth.js
 ├── models/
-│ ├── user.js
-│ └── item.js
+│   ├── user.js
+│   └── item.js
 ├── server.js
 └── package.json
+```
 
 # Contributing
 
