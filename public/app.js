@@ -1,5 +1,5 @@
 const list = document.querySelector("ul");
-const input = document.querySelector("input");
+const input = document.querySelector("#item");
 const addBtn = document.querySelector("#addBtn");
 const selectAllBtn = document.querySelector("#selectAllBtn");
 const deleteCheckedBtn = document.querySelector("#deleteCheckedBtn");
@@ -89,7 +89,6 @@ function createListItem(item) {
     .then((data) => {
       if (data.success && data.item) {
         // Make sure we're using the correct ID from the server response
-        // Check if _id exists before trying to access it
         if (!data.item._id) {
           console.error("Server returned item without _id:", data.item);
           showNotification("Item added but may not display correctly", "error");
@@ -98,9 +97,10 @@ function createListItem(item) {
 
         const savedItem = {
           ...data.item,
-          _id: data.item._id.toString
-            ? data.item._id.toString()
-            : data.item._id,
+          _id:
+            typeof data.item._id === "object"
+              ? data.item._id.toString()
+              : data.item._id,
         };
         renderItem(savedItem);
       } else {
@@ -277,22 +277,20 @@ addBtn.addEventListener("click", () => {
     return;
   }
 
-  input.value = "";
   createListItem(myItem);
+  input.value = "";
 });
 
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    const myItem = input.value.trim(); // Trim to handle spaces-only input
-
-    if (!myItem) {
-      // Show notification for empty input
-      showNotification("Please enter an item before adding", "error");
-      return;
+    e.preventDefault();
+    const itemText = input.value.trim();
+    if (itemText) {
+      createListItem(itemText);
+      input.value = "";
+    } else {
+      showNotification("Please enter an item", "error");
     }
-
-    input.value = "";
-    createListItem(myItem);
   }
 });
 
