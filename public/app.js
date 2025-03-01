@@ -15,6 +15,38 @@ const notificationContainer = document.createElement("div");
 notificationContainer.className = "notification";
 document.body.appendChild(notificationContainer);
 
+// Create theme toggle button
+const themeToggle = document.createElement("button");
+themeToggle.className = "theme-toggle";
+themeToggle.title = "Toggle dark mode";
+themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+document.body.appendChild(themeToggle);
+
+// Check for saved theme preference or use device preference
+const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+const savedTheme = localStorage.getItem("theme");
+
+if (savedTheme === "dark" || (!savedTheme && prefersDarkScheme.matches)) {
+  document.body.setAttribute("data-theme", "dark");
+  themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+} else {
+  document.body.removeAttribute("data-theme");
+  themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+}
+
+// Toggle theme when button is clicked
+themeToggle.addEventListener("click", () => {
+  if (document.body.getAttribute("data-theme") === "dark") {
+    document.body.removeAttribute("data-theme");
+    localStorage.setItem("theme", "light");
+    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+  } else {
+    document.body.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
+    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+  }
+});
+
 // Function to show notifications
 function showNotification(message, type = "error") {
   notificationContainer.className = `notification ${type}`;
@@ -68,7 +100,7 @@ fetch("/auth/current-user")
   })
   .catch((err) => console.error("Error fetching user:", err));
 
-// Modify the createListItem function to save to database
+// Modify the createListItem function to use the current username
 function createListItem(item) {
   // First save to database
   fetch("/auth/add-item", {
@@ -76,7 +108,11 @@ function createListItem(item) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ item }),
+    body: JSON.stringify({
+      item,
+      // Make sure we're using the current user's username
+      addedBy: currentUsername,
+    }),
   })
     .then((response) => {
       if (!response.ok) {
@@ -146,7 +182,7 @@ function renderItem(itemData) {
   listItem.appendChild(listText);
   listItem.appendChild(userSpan);
   listText.textContent = capitalizedItem;
-  userSpan.textContent = `Added by ${itemData.addedBy}`;
+  userSpan.textContent = `Added by ${itemData.addedBy || currentUsername}`;
 
   // Only show delete button if current user is the creator
   if (itemData.addedBy === currentUsername) {

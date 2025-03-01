@@ -401,3 +401,50 @@ input[type="checkbox"]:checked + .item-text {
   min-height: 100px;
   height: auto;
 }
+
+/* Add this to your style.css file */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  z-index: 100;
+  transition: all 0.3s ease;
+  padding: 0;
+  min-width: 0;
+  line-height: 1;
+}
+
+.theme-toggle i {
+  font-size: 1rem;
+  width: auto;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 108, 250, 0.3);
+}
+
+[data-theme="dark"] .theme-toggle {
+  background-color: #ffb700;
+  color: #121212;
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+  background-color: #ffc730;
+  box-shadow: 0 4px 12px rgba(255, 183, 0, 0.3);
+}
