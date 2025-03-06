@@ -448,3 +448,121 @@ input[type="checkbox"]:checked + .item-text {
   background-color: #ffc730;
   box-shadow: 0 4px 12px rgba(255, 183, 0, 0.3);
 }
+
+/* Add these mobile-specific styles to the bottom of your CSS file */
+@media (max-width: 768px) {
+  /* Adjust body padding for mobile */
+  body {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  /* Make heading smaller on mobile */
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Ensure theme toggle doesn't overlap with content */
+  .theme-toggle {
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Improve input container for mobile */
+  .input-container {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Make list items more touch-friendly */
+  li {
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.6rem;
+  }
+
+  /* Increase checkbox size for better touch targets */
+  input[type="checkbox"] {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+
+  /* Make delete buttons larger for touch */
+  li button {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Adjust notification position */
+  .notification {
+    top: 50px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    width: auto;
+  }
+
+  /* Improve modal for mobile */
+  .modal-content {
+    width: 85%;
+    padding: 1.5rem;
+  }
+
+  /* Fix controls container on very small screens */
+  @media (max-width: 400px) {
+    .controls-container {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .controls-container button {
+      width: 100%;
+    }
+  }
+
+  /* Improve touch targets for all buttons */
+  button {
+    min-height: 44px;
+  }
+
+  /* Fix welcome message and logout button */
+  .welcome-message {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Add viewport-height based styling for better mobile experience */
+@media (max-height: 700px) {
+  body {
+    padding-top: 0.5rem;
+  }
+
+  h1 {
+    margin-bottom: 1rem;
+  }
+
+  .list-container {
+    max-height: 50vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Add overscroll behavior for smoother mobile scrolling */
+html,
+body {
+  overscroll-behavior-y: contain;
+}
+
+/* Add active state styles for better touch feedback */
+button:active {
+  transform: scale(0.98);
+}
+
+/* Improve tap highlight color for mobile */
+* {
+  -webkit-tap-highlight-color: rgba(74, 108, 250, 0.2);
+}
