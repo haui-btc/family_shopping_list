@@ -17,7 +17,7 @@ services:
       - /usr/src/app/node_modules
 
   mongo:
-    image: mongo:latest
+    image: mongo:4.4.18
     ports:
       - "27017:27017"
     volumes:
