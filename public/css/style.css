@@ -114,7 +114,24 @@ input[type="text"] {
 input[type="text"]:focus {
   outline: none;
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(74, 108, 250, 0.2);
+  box-shadow: 0 0 0 2px rgba(58, 86, 197, 0.2);
+}
+
+input[type="password"] {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: var(--secondary-color);
+  color: var(--text-color);
+}
+
+input[type="password"]:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(58, 86, 197, 0.2);
 }
 
 button {
