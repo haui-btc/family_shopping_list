@@ -6,8 +6,18 @@
     <title>Login - Family Shopping List</title>
     <link rel="stylesheet" href="/public/css/auth.css" />
     <link rel="stylesheet" href="/public/css/style.css" />
+    <!-- Add Font Awesome for theme toggle icon -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
   </head>
   <body>
+    <!-- Add theme toggle button -->
+    <button class="theme-toggle" id="themeToggle">
+      <i class="fas fa-sun"></i>
+    </button>
+
     <div class="auth-container">
       <h1>Login</h1>
       <form class="auth-form" id="loginForm">
@@ -25,6 +35,7 @@
         <p>
           Don't have an account? <a href="/views/register.html">Register</a>
         </p>
+        <p><a href="/views/forgot-password.html">Forgot Password?</a></p>
       </div>
     </div>
 
@@ -40,6 +51,42 @@
     </div>
 
     <script>
+      // Theme toggle functionality
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIcon = themeToggle.querySelector("i");
+
+      // Check for saved theme preference or default to light
+      const savedTheme = localStorage.getItem("theme") || "light";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+
+      // Update icon based on current theme
+      if (savedTheme === "dark") {
+        themeIcon.classList.remove("fa-sun");
+        themeIcon.classList.add("fa-moon");
+      }
+
+      // Toggle theme when button is clicked
+      themeToggle.addEventListener("click", () => {
+        const currentTheme =
+          document.documentElement.getAttribute("data-theme");
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+        // Update theme attribute
+        document.documentElement.setAttribute("data-theme", newTheme);
+
+        // Save preference to localStorage
+        localStorage.setItem("theme", newTheme);
+
+        // Update icon
+        if (newTheme === "dark") {
+          themeIcon.classList.remove("fa-sun");
+          themeIcon.classList.add("fa-moon");
+        } else {
+          themeIcon.classList.remove("fa-moon");
+          themeIcon.classList.add("fa-sun");
+        }
+      });
+
       const errorModal = document.getElementById("errorModal");
       const errorMessageEl = document.getElementById("errorMessage");
       const errorOkBtn = document.getElementById("errorOk");
