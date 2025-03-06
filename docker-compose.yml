@@ -20,12 +20,10 @@ services:
 
   mongo:
     image: mongo:4.4
-    container_name: family_shopping_list_mongo_1
-    restart: always
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - mongodb_data:/data/db
 
 volumes:
   mongodb_data:
