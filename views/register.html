@@ -98,7 +98,7 @@
       const errorModal = document.getElementById("errorModal");
       const errorMessageEl = document.getElementById("errorMessage");
       const errorOkBtn = document.getElementById("errorOk");
-      const modalTitle = document.querySelector(".modal-content.error h2");
+      const modalTitle = document.querySelector(".modal-content h2");
 
       // Close modal when OK is clicked
       errorOkBtn.addEventListener("click", () => {
@@ -115,6 +115,9 @@
           // Additional email validation
           const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
           if (!emailRegex.test(email)) {
+            const modalContent = document.querySelector(".modal-content");
+            modalContent.classList.remove("success");
+            modalContent.classList.add("error");
             modalTitle.textContent = "Error";
             errorMessageEl.textContent = "Please enter a valid email address";
             errorModal.style.display = "flex";
@@ -137,6 +140,9 @@
             const data = await response.json();
             if (response.ok) {
               // Show success message in modal before redirecting
+              const modalContent = document.querySelector(".modal-content");
+              modalContent.classList.remove("error");
+              modalContent.classList.add("success");
               modalTitle.textContent = "Welcome!";
               errorMessageEl.textContent =
                 "Registration successful! Please login.";
@@ -150,7 +156,10 @@
                 { once: true }
               );
             } else {
-              // Show error in modal
+              // Show error message from server
+              const modalContent = document.querySelector(".modal-content");
+              modalContent.classList.remove("success");
+              modalContent.classList.add("error");
               modalTitle.textContent = "Error";
               errorMessageEl.textContent =
                 data.message || "Registration failed";
@@ -158,8 +167,11 @@
             }
           } catch (error) {
             // Show error modal for network errors
+            const modalContent = document.querySelector(".modal-content");
+            modalContent.classList.remove("success");
+            modalContent.classList.add("error");
             modalTitle.textContent = "Error";
-            errorMessageEl.textContent = "An error occurred. Please try again.";
+            errorMessageEl.textContent = "Network error. Please try again.";
             errorModal.style.display = "flex";
           }
         });

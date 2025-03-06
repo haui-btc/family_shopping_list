@@ -115,6 +115,7 @@ body {
 .modal-content.error {
   max-width: 300px;
   padding: 1.5rem;
+  border: 1px solid #ff3b30;
 }
 
 .modal-content.error h2 {
@@ -135,4 +136,31 @@ body {
 
 .modal-content.error .modal-buttons button:hover {
   background-color: var(--text-color);
+}
+
+/* Success modal styles */
+.modal-content.success {
+  max-width: 300px;
+  padding: 1.5rem;
+  border: 1px solid #28a745;
+}
+
+.modal-content.success h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+}
+
+.modal-content.success p {
+  font-size: 0.9rem;
+  margin-bottom: 1.2rem;
+}
+
+.modal-content.success .modal-buttons button {
+  min-width: 80px;
+  padding: 0.5rem 1rem;
+  background-color: #4a6cfa;
+}
+
+.modal-content.success .modal-buttons button:hover {
+  background-color: #3a56c5;
 }
