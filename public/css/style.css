@@ -512,6 +512,22 @@ input[type="checkbox"]:checked + .item-text {
   li button {
     width: 36px;
     height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    max-width: 36px;
+    max-height: 36px;
+    padding: 0;
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Ensure icon is centered in the button */
+  li button i {
+    font-size: 1.1rem;
+    line-height: 1;
   }
 
   /* Adjust notification position */
