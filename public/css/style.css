@@ -17,17 +17,17 @@
 
 /* Dark theme variables */
 [data-theme="dark"] {
-  --background: #121212;
-  --primary-color: #1e1e1e;
-  --secondary-color: #2d2d2d;
-  --accent-color: #6c8eff;
-  --text-color: #e0e0e0;
+  --background: #1b252f;
+  --primary-color: #263545;
+  --secondary-color: #2c3e50;
+  --accent-color: #5d87ff;
+  --text-color: #e0e6ed;
   --delete-color: #ff6b6b;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --list-container-bg: #252525;
-  --border-color: #3a3a3a;
-  --secondary-button: #4d5154;
-  --checked-text: #9e9e9e;
+  --list-container-bg: #1f2a36;
+  --border-color: #34495e;
+  --secondary-button: #546e7a;
+  --checked-text: #a0aec0;
 }
 
 body {
